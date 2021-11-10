@@ -1,8 +1,15 @@
 let changeColor = document.getElementById("changeColor");
+let reset = document.getElementById("reset");
+
 
 chrome.storage.sync.get("color", ({ color }) => {
   changeColor.style.backgroundColor = color;
+ 
 });
+//chrome.storage.sync.get("color", ({ color}) => {
+  //reset.style.backgroundColor = null;
+//});
+//CHANGE COLOR BUTTON//
 changeColor.addEventListener("click", async () => {
     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   
@@ -12,10 +19,24 @@ changeColor.addEventListener("click", async () => {
     });
   });
   
-  // The body of this function will be executed as a content script inside the
-  // current page
-  function setPageBackgroundColor() {
-    chrome.storage.sync.get("color", ({ color }) => {
+  //RESET BUTTON//
+  reset.addEventListener("click", async () => {
+    let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      function: resetPageBackgroundColor,
+    });
+  });
+  function resetPageBackgroundColor(){
+    document.body.style.backgroundColor = null; 
+
+  }
+  
+  //trying to just use event listeners to change the background color as necesary
+  function setColor() {
+   chrome.storage.sync.get("color", ({ color }) => {
       document.body.style.backgroundColor = color;
+          //document.body.style.backgroundColor = null;
     });
   }
